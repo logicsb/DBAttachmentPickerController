@@ -35,7 +35,7 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 
 @property (assign, nonatomic) BOOL showCollectionView;
 @property (strong, nonatomic) UICollectionView *collectionView;
-@property (copy, nonatomic)   NSString *attachActionText;
+@property (copy, nonatomic) NSString *attachActionText;
 
 @property (strong, nonatomic) PHFetchResult *assetsFetchResult;
 @property (strong, nonatomic) PHCachingImageManager *imageManager;
@@ -46,7 +46,6 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 @property (strong, nonatomic) NSMutableArray *selectedIndexPathArray;
 @property (strong, nonatomic) NSMutableArray *oldSelectedIndexPathArray;
 @property (strong, nonatomic) NSMutableArray *customActions;
-
 
 @property (strong, nonatomic) AlertAttachAssetsHandler extensionAttachHandler;
 
@@ -65,23 +64,23 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
                                                otherAppsHandler:(nullable AlertActionHandler)otherAppsHandler
                                                   cancelHandler:(nullable AlertActionHandler)cancelHandler {
     
-    [self attachmentAlertControllerWithMediaType:assetMediaType
-                         allowsMultipleSelection:allowsMultipleSelection
-                              allowsMediaLibrary:allowsPhotoOrVideo
-                                 allowsOtherApps:allowsOtherApps
-                                   customActions:nil
-                                   attachHandler:attachHandler
-                                allAlbumsHandler:allAlbumsHandler
-                              takePictureHandler:takePictureHandler
-                                otherAppsHandler:otherAppsHandler
-                                   cancelHandler:cancelHandler];
+    return [self attachmentAlertControllerWithMediaType:assetMediaType
+                                allowsMultipleSelection:allowsMultipleSelection
+                                     allowsMediaLibrary:allowsPhotoOrVideo
+                                        allowsOtherApps:allowsOtherApps
+                                          customActions:nil
+                                          attachHandler:attachHandler
+                                       allAlbumsHandler:allAlbumsHandler
+                                     takePictureHandler:takePictureHandler
+                                       otherAppsHandler:otherAppsHandler
+                                          cancelHandler:cancelHandler];
 }
 
 + (_Nonnull instancetype)attachmentAlertControllerWithMediaType:(PHAssetMediaType)assetMediaType
                                         allowsMultipleSelection:(BOOL)allowsMultipleSelection
                                              allowsMediaLibrary:(BOOL)allowsPhotoOrVideo
                                                 allowsOtherApps:(BOOL)allowsOtherApps
-                                                  customActions:(NSArray *) customActions
+                                                  customActions:(nullable NSArray *) customActions
                                                   attachHandler:(nullable AlertAttachAssetsHandler)attachHandler
                                                allAlbumsHandler:(nullable AlertActionHandler)allAlbumsHandler
                                              takePictureHandler:(nullable AlertActionHandler)takePictureHandler
@@ -97,7 +96,7 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
     controller.title = ( controller.showCollectionView ? @"\n\n\n\n\n" : NSLocalizedString(@"Attach files", @"Title") );
     
     if (customActions.count > 0) {
-        controller.customActions = customActions;
+        controller.customActions = [NSMutableArray arrayWithArray:customActions];
     }
     
     if (showPhotoOrVideo && controller.assetsFetchResult.count ) {
@@ -126,14 +125,14 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
         NSString *buttonTitle;
         switch (controller.assetMediaType) {
             case PHAssetMediaTypeVideo:
-            buttonTitle = NSLocalizedString(@"Take a video", @"Button on main menu");
-            break;
+                buttonTitle = NSLocalizedString(@"Take a video", @"Button on main menu");
+                break;
             case PHAssetMediaTypeImage:
-            buttonTitle = NSLocalizedString(@"Take a picture", @"Button on main menu");
-            break;
+                buttonTitle = NSLocalizedString(@"Take a picture", @"Button on main menu");
+                break;
             default:
-            buttonTitle = NSLocalizedString(@"Take a picture or a video", @"Button on main menu");
-            break;
+                buttonTitle = NSLocalizedString(@"Take a picture or a video", @"Button on main menu");
+                break;
         }
         UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:buttonTitle style:UIAlertActionStyleDefault handler:takePictureHandler];
         [controller addAction:cameraAction];
@@ -143,7 +142,6 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
         UIAlertAction *otherAppsAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Other apps", @"Button on main menu") style:UIAlertActionStyleDefault handler:otherAppsHandler];
         [controller addAction:otherAppsAction];
     }
-    
     
     __weak DBAttachmentAlertController *weakController = controller;
     NSArray *actions = weakController.customActions;
@@ -163,9 +161,9 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.selectedIndexPathArray = [NSMutableArray arrayWithCapacity:100];
     self.oldSelectedIndexPathArray = [NSMutableArray new];
-
 
     if (self.showCollectionView) {
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc]init];
@@ -212,22 +210,11 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
         [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
     }
 }
-- (void) orderByIndexPath: (NSMutableArray * )array {
-    [self.selectedIndexPathArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        NSIndexPath *indexPath1 = obj1;
-        NSIndexPath *indexPath2 = obj2;
-        return [@(indexPath1.row) compare:@(indexPath2.row)];
-    }];
-
-}
 
 - (void) viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     [self recalculateVisibleCellsSelectorOffsetWithScrollViewOffsetX:self.collectionView.contentOffset.x];
     [self updateAttachPhotoCountIfNedded];
-}
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
 }
 
 - (void)dealloc {
@@ -270,6 +257,12 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
     }
     return [assetArray copy];
 }
+
+//- (void)orderByIndexPath:(NSMutableArray *) array {
+//    [self.selectedIndexPathArray sortUsingComparator:^NSComparisonResult(NSIndexPath *indexPath1, NSIndexPath *indexPath2) {
+//        return [@(indexPath1.row) compare:@(indexPath2.row)];
+//    }];
+//}
 
 #pragma mark - Accessors
 
@@ -420,7 +413,6 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
     } else {
         self.extensionAttachHandler([self getSelectedAssetArray]);
     }
-
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {

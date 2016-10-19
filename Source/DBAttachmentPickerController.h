@@ -40,9 +40,12 @@ typedef void (^FinishVideoPickingBlock)(NSArray* resourceArray);
 typedef void (^CancelBlock)();
 
 @interface DBAttachmentPickerController : NSObject
+
+// TODO: Needs add descriptions for new properties
 @property (nonatomic, retain, nullable) NSPredicate *customPredicate;
 @property (nonatomic, retain, nullable) NSNumber *maxItems;
 @property (nonatomic, retain, nullable) NSArray *selectedItems;
+
 /*!
  @brief Used to provide opportunity to correctly calculate position popover view when app works on iPad. You can specify UIButton, UITableViewCell, etc. instance to which the user touched.
  @attention The parameter must contain only UIView subclass instance or nil
@@ -63,12 +66,12 @@ typedef void (^CancelBlock)();
  @brief Used to determine the quality of the captured video from camera
  */
 @property (assign, nonatomic) UIImagePickerControllerQualityType capturedVideoQulity;   // default is UIImagePickerControllerQualityTypeMedium
-    
-    
+
+// TODO: Needs add to README
 /*!
  @brief Used to determine maximum video recording duration
  */
-@property (assign, nonatomic) NSTimeInterval capturedMaximumDuration;   // default is 0
+@property (assign, nonatomic) NSTimeInterval capturedMaximumDuration;                   // default is 0
     
 /*!
  @brief Used to add Other Apps button
@@ -82,7 +85,7 @@ typedef void (^CancelBlock)();
  */
 @property (assign, nonatomic) BOOL allowsMultipleSelection;                             // default is NO
 
-+ (instancetype)attachmentPickerControllerWithCustomActions:(NSArray *)customActions
++ (instancetype)attachmentPickerControllerWithCustomActions:(nullable NSArray *)customActions
                                          FinishPickingBlock:(FinishPickingBlock)finishPickingBlock
                                                 cancelBlock:(_Nullable CancelBlock)cancelBlock;
 
