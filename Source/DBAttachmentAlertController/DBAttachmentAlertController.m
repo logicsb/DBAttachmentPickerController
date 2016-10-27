@@ -401,13 +401,14 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     NSIndexPath *reversedIndex = [NSIndexPath indexPathForRow:self.assetsFetchResult.count - indexPath.item - 1 inSection:0];
-
+    
     if (self.maxItems) {
         if ((self.selectedIndexPathArray.count < [self.maxItems intValue])) {
             [self selectItemAtIndex:reversedIndex];
         } else {
-            [self.collectionView deselectItemAtIndexPath:reversedIndex animated:YES];
+            [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
         }
+        
     }else {
         [self selectItemAtIndex:reversedIndex];
     }
