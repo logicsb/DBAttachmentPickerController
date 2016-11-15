@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
                                              allowsMediaLibrary:(BOOL)allowsPhotoOrVideo
                                                 allowsOtherApps:(BOOL)allowsOtherApps
                                                   customActions:(NSArray *) customActions
+                                                customPredicate:(NSPredicate *) customPredicate
                                                   attachHandler:(nullable AlertAttachAssetsHandler)attachHandler
                                                allAlbumsHandler:(nullable AlertActionHandler)allAlbumsHandler
                                              takePictureHandler:(nullable AlertActionHandler)takePictureHandler

@@ -153,11 +153,14 @@ const DBAttachmentMediaType DBAttachmentMediaTypeMaskAll = DBAttachmentMediaType
 - (void)presentOnViewController:(UIViewController *)initialViewController {
     self.initialViewController = initialViewController;
     __weak typeof(self) weakSelf = self;
+    
+
     self.alertController = [DBAttachmentAlertController attachmentAlertControllerWithMediaType:[self assetMediaType]
                                                                        allowsMultipleSelection:self.allowsMultipleSelection
                                                                             allowsMediaLibrary:( (self.mediaType & DBAttachmentMediaTypeImage) || (self.mediaType & DBAttachmentMediaTypeVideo) )
                                                                                allowsOtherApps:self.allowsSelectionFromOtherApps
                                                                                  customActions:self.customActions
+                                                                               customPredicate:self.customPredicate
                                                                                  attachHandler:^(NSArray<PHAsset *> *assetArray) {
                                                                                      NSArray<DBAttachment *> *attachmentArray = [weakSelf attachmentArrayFromPHAssetArray:assetArray];
                                                                                      [weakSelf finishPickingWithAttachmentArray:attachmentArray];
@@ -165,9 +168,9 @@ const DBAttachmentMediaType DBAttachmentMediaTypeMaskAll = DBAttachmentMediaType
                                                                                      weakSelf.selectedItems = self.selectedItems;
                                                                                      weakSelf.maxItems = self.maxItems;
                                                                                      
-                                                                                     if (self.customPredicate) {
-                                                                                         weakSelf.customPredicate = self.customPredicate;
-                                                                                     }
+                                                                                    // if (self.customPredicate) {
+                                                                                    //     weakSelf.customPredicate = self.customPredicate;
+                                                                                    // }
                                                                                      [weakSelf allAlbumsDidSelect];
                                                                                  } takePictureHandler:^(UIAlertAction *action) {
                                                                                      [weakSelf takePictureButtonDidSelect];
@@ -179,7 +182,7 @@ const DBAttachmentMediaType DBAttachmentMediaTypeMaskAll = DBAttachmentMediaType
 
     self.alertController.selectedItems = self.selectedItems;
     self.alertController.maxItems = self.maxItems;
-    self.alertController.customPredicate = self.customPredicate;
+    //self.alertController.customPredicate = self.customPredicate;
     self.alertController.popoverPresentationController.sourceView = [self popoverPresentationView];
     self.alertController.popoverPresentationController.sourceRect = [self popoverPresentationRect];
     self.alertController.popoverPresentationController.permittedArrowDirections = [self popoverPresentationArrowDirection];

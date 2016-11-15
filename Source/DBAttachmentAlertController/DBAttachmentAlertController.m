@@ -70,6 +70,7 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
                               allowsMediaLibrary:allowsPhotoOrVideo
                                  allowsOtherApps:allowsOtherApps
                                    customActions:nil
+                                 customPredicate:nil
                                    attachHandler:attachHandler
                                 allAlbumsHandler:allAlbumsHandler
                               takePictureHandler:takePictureHandler
@@ -82,6 +83,7 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
                                              allowsMediaLibrary:(BOOL)allowsPhotoOrVideo
                                                 allowsOtherApps:(BOOL)allowsOtherApps
                                                   customActions:(NSArray *) customActions
+                                                customPredicate:(NSPredicate *) customPredicate
                                                   attachHandler:(nullable AlertAttachAssetsHandler)attachHandler
                                                allAlbumsHandler:(nullable AlertActionHandler)allAlbumsHandler
                                              takePictureHandler:(nullable AlertActionHandler)takePictureHandler
@@ -93,6 +95,7 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
     DBAttachmentAlertController *controller = [DBAttachmentAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     controller.assetMediaType = assetMediaType;
     controller.allowsMultipleSelection = allowsMultipleSelection;
+    controller.customPredicate = customPredicate;
     controller.showCollectionView = ( showPhotoOrVideo && controller.assetsFetchResult.count );
     controller.title = ( controller.showCollectionView ? @"\n\n\n\n\n" : NSLocalizedString(@"Attach files", @"Title") );
     
@@ -242,10 +245,7 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
     if (_assetsFetchResult == nil) {
         PHFetchOptions *allPhotosOptions = [PHFetchOptions new];
 
-        [_assetsFetchResult enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            
-        }];
-        if (![self.customPredicate isKindOfClass:[NSNull class]]) {
+        if (self.customPredicate) {
             allPhotosOptions.predicate = self.customPredicate;
             _assetsFetchResult = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
         }
@@ -257,6 +257,10 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
                 _assetsFetchResult = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
             }
         }
+        
+        [_assetsFetchResult enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+        }];
     }
     return _assetsFetchResult;
 }
