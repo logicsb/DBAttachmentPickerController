@@ -248,6 +248,9 @@ static NSString * const reuseIdentifier = @"Cell";
     cell.identifier = asset.localIdentifier;
     cell.needsDisplayEmptySelectedIndicator = NO;
     [cell.assetImageView configureWithAssetMediaType:asset.mediaType subtype:asset.mediaSubtypes];
+    cell.alpha = 1;
+    cell.userInteractionEnabled = YES;
+    cell.selectorImageView.hidden = NO;
     
     if (asset.mediaType == PHAssetMediaTypeVideo) {
         NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
@@ -255,6 +258,11 @@ static NSString * const reuseIdentifier = @"Cell";
         formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
         formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
         cell.durationLabel.text = [formatter stringFromTimeInterval:asset.duration];
+        if (asset.duration > self.capturedMaximumDuration && self.capturedMaximumDuration != 0) {
+            cell.alpha = 0.5;
+            cell.selectorImageView.hidden = YES;
+            cell.userInteractionEnabled = NO;
+        }
     } else {
         cell.durationLabel.text = nil;
     }

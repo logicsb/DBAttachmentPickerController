@@ -180,6 +180,7 @@ const DBAttachmentMediaType DBAttachmentMediaTypeMaskAll = DBAttachmentMediaType
                                                                                      [weakSelf cancelDidSelect];
                                                                                  }];
 
+    self.alertController.capturedMaximumDuration = self.capturedMaximumDuration;
     self.alertController.selectedItems = self.selectedItems;
     self.alertController.maxItems = self.maxItems;
     //self.alertController.customPredicate = self.customPredicate;
@@ -248,6 +249,7 @@ const DBAttachmentMediaType DBAttachmentMediaTypeMaskAll = DBAttachmentMediaType
     viewController.assetPickerDelegate = self;
     viewController.selectedItems = self.selectedItems;
     viewController.maxItems = self.maxItems;
+    viewController.capturedMaximumDuration = self.capturedMaximumDuration;
     viewController.customPredicate = self.customPredicate;
     [self.initialViewController presentViewController:viewController animated:YES completion:nil];
 }

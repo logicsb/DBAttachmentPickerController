@@ -26,6 +26,7 @@ typedef void (^AlertActionHandler)(UIAlertAction * _Nonnull action);
 
 @interface DBAttachmentAlertController : UIAlertController
 @property (assign, nonatomic) NSNumber * _Nonnull maxItems;
+@property (assign, nonatomic) NSTimeInterval capturedMaximumDuration;
 
 NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic, readonly) PHAssetMediaType assetMediaType;

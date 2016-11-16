@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface DBAssetPickerController : UINavigationController
-
+@property (assign, nonatomic) NSTimeInterval capturedMaximumDuration;   // default is 0
 @property (weak, nonatomic, nullable) id<DBAssetPickerControllerDelegate> assetPickerDelegate;
 @property (assign, nonatomic) PHAssetMediaType assetMediaType;
 @property (nonatomic, assign, nonnull) NSArray *selectedItems;

@@ -49,6 +49,7 @@
 - (void)DBAssetGroupsViewController:(DBAssetGroupsViewController *)controller didSelectAssetColoection:(PHAssetCollection *)assetCollection {
     DBAssetItemsViewController *itemsController = [[DBAssetItemsViewController alloc] initWithNibName:NSStringFromClass([DBAssetItemsViewController class]) bundle:[NSBundle dbAttachmentPickerBundle]];
     itemsController.selectedItens = self.selectedItems;
+    itemsController.capturedMaximumDuration = self.capturedMaximumDuration;
     itemsController.maxItems = self.maxItems;
     itemsController.assetMediaType = self.assetMediaType;
     if (![self.customPredicate isKindOfClass:[NSNull class]]) {

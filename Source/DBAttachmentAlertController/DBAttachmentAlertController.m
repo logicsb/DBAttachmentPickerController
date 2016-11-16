@@ -31,7 +31,7 @@ static const CGFloat kDefaultItemOffset = 11.f;
 static const CGFloat kDefaultInteritemSpacing = 4.f;
 static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 
-@interface DBAttachmentAlertController () <UICollectionViewDataSource, UICollectionViewDelegate, PHPhotoLibraryChangeObserver>
+@interface DBAttachmentAlertController () <UICollectionViewDataSource, UICollectionViewDelegate, PHPhotoLibraryChangeObserver, UIAlertViewDelegate>
 
 @property (assign, nonatomic) BOOL showCollectionView;
 @property (strong, nonatomic) UICollectionView *collectionView;
@@ -46,7 +46,6 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 @property (strong, nonatomic) NSMutableArray *selectedIndexPathArray;
 @property (strong, nonatomic) NSMutableArray *oldSelectedIndexPathArray;
 @property (strong, nonatomic) NSMutableArray *customActions;
-
 
 @property (strong, nonatomic) AlertAttachAssetsHandler extensionAttachHandler;
 
@@ -377,13 +376,20 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
     cell.identifier = asset.localIdentifier;
     cell.needsDisplayEmptySelectedIndicator = self.needsDisplayEmptySelectedIndicator;
     [cell.assetImageView configureWithAssetMediaType:asset.mediaType subtype:asset.mediaSubtypes];
-    
+    cell.alpha = 1;
+    cell.userInteractionEnabled = YES;
+    cell.selectorImageView.hidden = NO;
     if (asset.mediaType == PHAssetMediaTypeVideo) {
         NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
         formatter.zeroFormattingBehavior = NSDateComponentsFormatterZeroFormattingBehaviorPad;
         formatter.unitsStyle = NSDateComponentsFormatterUnitsStylePositional;
         formatter.allowedUnits = NSCalendarUnitMinute | NSCalendarUnitSecond;
         cell.durationLabel.text = [formatter stringFromTimeInterval:asset.duration];
+        if (asset.duration > self.capturedMaximumDuration && self.capturedMaximumDuration != 0) {
+            cell.alpha = 0.5;
+            cell.selectorImageView.hidden = YES;
+            cell.userInteractionEnabled = NO;
+        }
     } else {
         cell.durationLabel.text = nil;
     }
@@ -405,15 +411,17 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     NSIndexPath *reversedIndex = [NSIndexPath indexPathForRow:self.assetsFetchResult.count - indexPath.item - 1 inSection:0];
+    PHAsset *asset = self.assetsFetchResult[reversedIndex.row];
     
-    if (self.maxItems) {
+    if (asset.mediaType == PHAssetMediaTypeVideo && asset.duration > self.capturedMaximumDuration && self.capturedMaximumDuration != 0) {
+        [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    } else if (self.maxItems) {
         if ((self.selectedIndexPathArray.count < [self.maxItems intValue])) {
             [self selectItemAtIndex:reversedIndex];
         } else {
             [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
         }
-        
-    }else {
+    } else {
         [self selectItemAtIndex:reversedIndex];
     }
 }
@@ -473,6 +481,17 @@ static NSString *const kPhotoCellIdentifier = @"DBThumbnailPhotoCellID";
         BOOL isLastItem = ( offsetX + CGRectGetWidth(self.collectionView.frame) < CGRectGetMaxX(cell.frame) );
         cell.selectorOffset = ( isLastItem ? CGRectGetMaxX(cell.frame) - ( offsetX + CGRectGetWidth(self.collectionView.frame) ) : .0f);
     }
+}
+
+- (void) showAlertMaxTimeVideo:(NSIndexPath *) indexPath {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"erorr" message:@"1" delegate:self cancelButtonTitle:@"cancel" otherButtonTitles: nil];
+    alert.tag = indexPath.row;
+    [alert show];
+}
+#pragma mark - UIAlertView Delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSIndexPath *index = [NSIndexPath indexPathForRow:alertView.tag inSection:0];
+    [self.collectionView deselectItemAtIndexPath:index animated:YES];
 }
 
 @end

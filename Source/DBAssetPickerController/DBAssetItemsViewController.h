@@ -40,5 +40,6 @@ NS_ASSUME_NONNULL_END
 @property (strong, nonatomic, nonnull) NSArray *selectedItens;
 @property (nonatomic, retain, nonnull) NSNumber *maxItems;
 @property (nonatomic, retain, nullable) NSPredicate *customPredicate;
+@property (assign, nonatomic) NSTimeInterval capturedMaximumDuration;   // default is 0
 
 @end
