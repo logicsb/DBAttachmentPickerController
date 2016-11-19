@@ -23,6 +23,7 @@
 #import "DBAssetImageView.h"
 
 @interface DBThumbnailPhotoCell : UICollectionViewCell
+@property (weak, nonatomic, nullable) IBOutlet UIImageView *selectorImageView;
 
 @property (weak, nonatomic, nullable) IBOutlet DBAssetImageView *assetImageView;
 @property (weak, nonatomic, nullable) IBOutlet UILabel *durationLabel;

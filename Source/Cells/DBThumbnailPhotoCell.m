@@ -27,7 +27,6 @@ static const CGFloat kDefaultSelectorImageViewOffset = 4.f;
 
 @interface DBThumbnailPhotoCell ()
 
-@property (weak, nonatomic) IBOutlet UIImageView *selectorImageView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *selectorImageViewRightConstraint;
 
 @end
@@ -45,7 +44,6 @@ static const CGFloat kDefaultSelectorImageViewOffset = 4.f;
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    
     self.selectorImageView.image = [UIImage imageOfSelectorOffIcon];
     self.selectorImageView.highlightedImage = [UIImage imageOfSelectorOnIconWithTintColor:self.tintColor];
 }
